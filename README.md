@@ -66,16 +66,29 @@ A clean and minimal Neovim configuration based on modern Lua practices.
 
 ### General
 - `<Space>` - Leader key
-- `<leader>pv` - Open file explorer
+- `<leader>pv` - Toggle file explorer (nvim-tree)
+- `<leader>e` - Toggle file explorer (alternative)
+- `<leader>ef` - Find current file in explorer
+- `<leader>ec` - Collapse file explorer
 - `<leader>ff` - Find files (Telescope)
 - `<C-p>` - Git files (Telescope)
 
 ### LSP
 - `gd` - Go to definition
+- `gD` - Go to declaration  
+- `gi` - Go to implementation
+- `go` - Go to type definition
+- `gr` - Go to references
+- `gs` - Signature help
 - `K` - Hover documentation
-- `<leader>vca` - Code actions
-- `<leader>vrr` - Find references
-- `<leader>vrn` - Rename symbol
+- `<F2>` - Rename symbol
+- `<F4>` - Code actions
+- `<leader>ld` - Find definitions (Telescope)
+- `<leader>lr` - Find references (Telescope)
+- `<leader>li` - Find implementations (Telescope)
+- `<leader>ls` - Document symbols (Telescope)
+- `<leader>lw` - Workspace symbols (Telescope)
+- `<leader>lf` - Find current word in workspace (Telescope)
 
 ### Git
 - `<leader>gs` - Git status

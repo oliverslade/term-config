@@ -5,7 +5,11 @@ vim.keymap.set("n", "<leader>ff", function()
 end, { desc = "Find files" })
 
 vim.g.mapleader = " "
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+-- File Explorer (nvim-tree)
+vim.keymap.set("n", "<leader>pv", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+vim.keymap.set("n", "<leader>ef", "<cmd>NvimTreeFindFile<CR>", { desc = "Find current file in explorer" })
+vim.keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Collapse file explorer" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
@@ -44,6 +48,28 @@ vim.keymap.set(
 )
 
 vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
+
+-- LSP Keybindings (global)
+vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to definition" })
+vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { desc = "Go to declaration" })
+vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { desc = "Go to implementation" })
+vim.keymap.set("n", "go", vim.lsp.buf.type_definition, { desc = "Go to type definition" })
+vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "Go to references" })
+vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, { desc = "Signature help" })
+vim.keymap.set("n", "<F2>", vim.lsp.buf.rename, { desc = "Rename symbol" })
+vim.keymap.set("n", "<F4>", vim.lsp.buf.code_action, { desc = "Code action" })
+
+-- Alternative LSP navigation using Telescope (when gd fails)
+vim.keymap.set("n", "<leader>ld", "<cmd>Telescope lsp_definitions<cr>", { desc = "LSP: Find definitions" })
+vim.keymap.set("n", "<leader>lr", "<cmd>Telescope lsp_references<cr>", { desc = "LSP: Find references" })
+vim.keymap.set("n", "<leader>li", "<cmd>Telescope lsp_implementations<cr>", { desc = "LSP: Find implementations" })
+vim.keymap.set("n", "<leader>ls", "<cmd>Telescope lsp_document_symbols<cr>", { desc = "LSP: Document symbols" })
+vim.keymap.set("n", "<leader>lw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", { desc = "LSP: Workspace symbols" })
+vim.keymap.set("n", "<leader>lf", function()
+    require('telescope.builtin').lsp_dynamic_workspace_symbols({
+        default_text = vim.fn.expand('<cword>')
+    })
+end, { desc = "LSP: Find current word in workspace" })
 
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")

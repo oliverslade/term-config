@@ -93,9 +93,91 @@ return {
         local metals_config = require("metals").bare_config()
         metals_config.settings = {
             showImplicitArguments = true,
+            showInferredType = true,
+            showImplicitConversionsAndClasses = true,
             excludedPackages = { "akka.actor.typed.javadsl", "com.github.swagger.akka.javadsl" },
+            enableSemanticHighlighting = true,
+            fallbackScalaVersion = "3.3.4",
+            serverVersion = "1.6.1", -- Use stable version instead of snapshot
+            bloopVersion = "latest.release",
+            -- Scala 3 specific settings
+            enableIndentOnPaste = true,
+            enableStripMarginOnTypeFormatting = true,
+            -- Better test interface (useful for Play's test frameworks)
+            testUserInterface = "Code Lenses",
+            -- Enable automatic build import for better project setup
+            autoImportBuild = true,
         }
         metals_config.capabilities = capabilities
+        
+        -- Simplify init_options for better compatibility
+        metals_config.init_options = {
+            statusBarProvider = "on",
+            isHttpEnabled = true,
+        }
+        
+        -- Add some debugging
+        metals_config.handlers = {
+            ["metals/status"] = function(err, result, ctx, config)
+                if result then
+                    print("Metals status: " .. (result.text or ""))
+                end
+            end
+        }
+        
+        -- Add Metals-specific commands and keybindings
+        metals_config.on_attach = function(client, bufnr)
+            print("Metals attached to buffer " .. bufnr .. " with client " .. client.name)
+            
+            -- Enable hover and signature help
+            vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, desc = "Hover documentation" })
+            vim.keymap.set("n", "<leader>ws", vim.lsp.buf.workspace_symbol, { buffer = bufnr, desc = "Workspace symbols" })
+            
+            -- Only set up codelens if supported
+            if client.server_capabilities.codeLensProvider then
+                vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, { buffer = bufnr, desc = "Code lens" })
+                vim.lsp.codelens.refresh()
+            end
+            
+            vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "Signature help" })
+            
+            -- Metals specific commands
+            vim.keymap.set("n", "<leader>mt", "<cmd>MetalsTreeViewToggle<cr>", { buffer = bufnr, desc = "Toggle Metals tree view" })
+            vim.keymap.set("n", "<leader>mp", "<cmd>MetalsTreeViewReveal<cr>", { buffer = bufnr, desc = "Reveal in Metals tree" })
+            vim.keymap.set("n", "<leader>mc", "<cmd>MetalsCompile<cr>", { buffer = bufnr, desc = "Metals compile" })
+            vim.keymap.set("n", "<leader>mi", "<cmd>MetalsImportBuild<cr>", { buffer = bufnr, desc = "Metals import build" })
+            vim.keymap.set("n", "<leader>md", function()
+                require("metals").commands()
+            end, { buffer = bufnr, desc = "Metals commands" })
+            vim.keymap.set("n", "<leader>mr", "<cmd>LspRestart<cr>", { buffer = bufnr, desc = "Restart LSP server" })
+            
+            -- Scala 3 and Play Framework helpful commands
+            vim.keymap.set("n", "<leader>mo", "<cmd>MetalsOrganizeImports<cr>", { buffer = bufnr, desc = "Organize imports" })
+            vim.keymap.set("n", "<leader>mw", "<cmd>MetalsNewScalaFile<cr>", { buffer = bufnr, desc = "New Scala file" })
+            
+            -- Only set up inlay hints toggle if supported
+            if client.server_capabilities.inlayHintProvider then
+                vim.keymap.set("n", "<leader>mh", function()
+                    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(bufnr), { bufnr = bufnr })
+                end, { buffer = bufnr, desc = "Toggle inlay hints" })
+            end
+            
+            -- Alternative navigation when gd fails
+            vim.keymap.set("n", "<leader>fs", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", { buffer = bufnr, desc = "Find symbols in workspace" })
+            vim.keymap.set("n", "<leader>fw", function()
+                require('telescope.builtin').lsp_dynamic_workspace_symbols({
+                    default_text = vim.fn.expand('<cword>')
+                })
+            end, { buffer = bufnr, desc = "Find workspace symbols (current word)" })
+            vim.keymap.set("n", "<leader>fd", "<cmd>Telescope lsp_definitions<cr>", { buffer = bufnr, desc = "Find definitions" })
+            vim.keymap.set("n", "<leader>fr", "<cmd>Telescope lsp_references<cr>", { buffer = bufnr, desc = "Find references" })
+            vim.keymap.set("n", "<leader>fi", "<cmd>Telescope lsp_implementations<cr>", { buffer = bufnr, desc = "Find implementations" })
+            
+            -- Enable inlay hints if supported
+            if client.server_capabilities.inlayHintProvider then
+                vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+            end
+        end
 
         -- Autocmd that will actually be in charging of starting the whole thing
         local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
