@@ -1,11 +1,13 @@
-# Neovim Configuration
+# My Terminal Configuration
 
-A clean and minimal Neovim configuration based on modern Lua practices.
+A clean and minimal terminal configuration based on my practices.
 
 ## Structure
 
 ```
 ├── tmux.conf              # Tmux configuration
+├── hammerspoon/
+│   └── init.lua           # Hammerspoon configuration for app launching
 ├── nvim/
 │   ├── init.lua           # Main configuration entry point
 │   └── lua/
@@ -22,6 +24,23 @@ A clean and minimal Neovim configuration based on modern Lua practices.
 ```
 
 ## Installation
+
+### Prerequisites
+
+Before setting up the configurations, ensure you have the required applications installed:
+
+```bash
+# Install Neovim
+brew install neovim
+
+# Install Tmux
+brew install tmux
+
+# Install Hammerspoon
+brew install --cask hammerspoon
+```
+
+Alternatively, you can download Hammerspoon directly from [hammerspoon.org](http://www.hammerspoon.org/).
 
 ### Neovim Configuration
 
@@ -60,9 +79,27 @@ A clean and minimal Neovim configuration based on modern Lua practices.
    tmux source-file ~/.tmux.conf
    ```
 
-2. Follow the individual installation steps above to copy files to their respective locations.
+### Hammerspoon Configuration
 
-## Key Mappings
+1. Backup your existing Hammerspoon configuration (if it exists):
+   ```bash
+   mv ~/.hammerspoon ~/.hammerspoon.backup
+   ```
+
+2. Create the Hammerspoon config directory and copy the hammerspoon folder contents:
+   ```bash
+   mkdir -p ~/.hammerspoon
+   cp -r hammerspoon/* ~/.hammerspoon/
+   ```
+
+3. Launch Hammerspoon and ensure it has the necessary accessibility permissions:
+   - Open Hammerspoon from Applications
+   - Grant accessibility permissions when prompted (System Preferences → Security & Privacy → Accessibility)
+   - The configuration will automatically reload when you save changes
+
+   **Note**: The configuration provides Alt+1-5 hotkeys for launching applications. The defaults are set to Firefox, Slack, VS Code, Terminal, Microsoft Teams.
+
+## Neovim Key Mappings
 
 ### General
 - `<Space>` - Leader key
